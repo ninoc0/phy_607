@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 # setting initial conditions
 m = 1000 # kg
 time = 0
-ts = 0.05
 pos = [0,300]
 vel = [10,-5]
 g = 9.8 # m/s^2
@@ -17,13 +16,12 @@ def tot_force_vect(velocity):
     curr_y_vel = velocity[1]
 
     #calculate force x acceleration
-
     x_force = - const * curr_x_vel * abs(curr_x_vel) #alternates the sign with the direction of motion
 
     #calculate force y acceleration
-
     y_force = -m*g - const * curr_y_vel * abs(curr_y_vel) #alternates the sign with the direction of motion
 
+    #creating a force vector
     force = (x_force, y_force)
 
     return force    
@@ -38,21 +36,20 @@ def update_pos(position, velocity, force, time_step):
     y_force = force[1]
 
     #calculate force x acceleration
-
     x_acceleration = x_force / m 
 
     new_vel_x = curr_x_vel + x_acceleration*time_step
 
     new_x = curr_x + new_vel_x * time_step
-    #calculate force y acceleration
 
+    #calculate force y acceleration
     y_acceleration = y_force / m 
 
     new_vel_y = curr_y_vel + y_acceleration*time_step
 
     new_y = curr_y + new_vel_y * time_step
+
     #gives out new position and velocity
-     
     position = ( new_x , new_y)
     velocity = (new_vel_x , new_vel_y)
 
@@ -65,37 +62,83 @@ def calc_energies(position, velocity):
     x_vel = velocity[0]
     y_vel = velocity[1]
 
+    # U = mgh
     pot = m * g * max(h,0)
-
+    # T = 1/2 mv**2
     kin = m * (x_vel**2 + y_vel**2) / 2
 
     tot = pot + kin
     return pot, kin, tot
 
-t_hist = [time]
-x_hist = [pos[0]]
-y_hist = [pos[1]]
-pot_hist, kin_hist, tot_hist = [], [], []
-
 # nico
-while pos[1] > 0:
-    time +=ts
-    f = tot_force_vect(vel)
-    pos, vel = update_pos(pos, vel, f, ts)
-    pot, kin, tot = calc_energies(pos, vel)
+def testing_timesteps(ts, pos_init, vel_init, time):
+    pos = [pos_init[0], pos_init[1]]
+    vel = [vel_init[0], vel_init[1]]
 
-    t_hist.append(time)
-    x_hist.append(pos[0])
-    y_hist.append(max(pos[1],0))
-    pot_hist.append(pot)
-    kin_hist.append(kin)
-    tot_hist.append(tot)
+    # stores data for graphing
+    t_hist = [time]
+    x_hist = [pos[0]]
+    y_hist = [pos[1]]
+    pot_hist, kin_hist, tot_hist = [], [], []
+    
+    # running the code over and over until the height is 0 
+    while pos[1] > 0:
+        time +=ts
+        f = tot_force_vect(vel)
+        pos, vel = update_pos(pos, vel, f, ts)
+        pot, kin, tot = calc_energies(pos, vel)
 
+        # updating the stored data
+        t_hist.append(time)
+        x_hist.append(pos[0])
+        y_hist.append(max(pos[1],0))
+        pot_hist.append(pot)
+        kin_hist.append(kin)
+        tot_hist.append(tot)
+    return t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist
+
+def analytic_solution(x0, y0, vx0, vy0):
+    t = np.linspace(0, 10, 500)
+    x = x0 + vx0*t
+    y = y0 + vy0*t - 0.5*g*t**2
+    y = np.maximum(y,0)
+    return t,x,y
+
+t_a,x_a,y_a = analytic_solution(0, 300, 15, -5)
+
+# graphing the trajectory
 plt.figure()
-plt.plot(x_hist, y_hist)
+
+# the trajectory gets to a higher precision and has more defined motion as it approaches 0
+t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(0.0001, pos, vel, time)
+plt.plot(x_hist, y_hist, label="ts=0.0001")
+t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(0.05, pos, vel, time)
+plt.plot(x_hist, y_hist, label="ts=0.05")
+t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(1, pos, vel, time)
+plt.plot(x_hist, y_hist, label="ts=1")
+t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(3, pos, vel, time)
+plt.plot(x_hist, y_hist, label="ts=3")
+
+# the analytic solution fits the parabolic shape better and the cow makes it further before hitting the ground
+plt.plot(x_a, y_a, "--", label="Analytic Soution")
+
 plt.xlabel("x(m)")
 plt.ylabel("y(m)")
 plt.title("Trajectory of Cow")
+plt.legend()
+plt.grid()
+
+t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(0.05, pos, vel, time)
+
+# energy is not conserved due to the wind resistance, but since wind resistance is a function of velocity, we "lose" energy more as time progresses
+plt.figure()
+plt.plot(t_hist[1:], pot_hist, label="Potential")
+plt.plot(t_hist[1:], kin_hist, label="Kinetic")
+plt.plot(t_hist[1:], tot_hist, label="Total")
+plt.xlabel("t (s)")
+plt.ylabel("Energy (J)")
+plt.title("Energy vs. Time")
+plt.legend()
 plt.grid()
 
 plt.show()
