@@ -1,21 +1,18 @@
-
+import numpy as np
+import matplotlib.pyplot as plt
 
 # setting initial conditions
 m = 1000 # kg
 time = 0
-ts = 20
-pos = [0,0]
-vel = [0,0]
-g = 9.8 # m/s
+ts = 0.05
+pos = [0,300]
+vel = [10,-5]
+g = 9.8 # m/s^2
 
 const = 3 # wind resistnace constant
 
-#theta = np.pi / 4 # angle of the cow falling down
-
 # sadman
-def tot_force_vect(position, velocity):
-    curr_x = position[0]
-    curr_y = position[1]
+def tot_force_vect(velocity):
     curr_x_vel = velocity[0]
     curr_y_vel = velocity[1]
 
@@ -44,18 +41,16 @@ def update_pos(position, velocity, force, time_step):
 
     x_acceleration = x_force / m 
 
-    new_x = curr_x + curr_x_vel * time_step
-
     new_vel_x = curr_x_vel + x_acceleration*time_step
 
+    new_x = curr_x + new_vel_x * time_step
     #calculate force y acceleration
 
     y_acceleration = y_force / m 
 
-    new_y = curr_y + curr_y_vel * time_step
-
     new_vel_y = curr_y_vel + y_acceleration*time_step
 
+    new_y = curr_y + new_vel_y * time_step
     #gives out new position and velocity
      
     position = ( new_x , new_y)
@@ -65,22 +60,42 @@ def update_pos(position, velocity, force, time_step):
 
 
 # nico
-def calc_forces(position, velocity):
+def calc_energies(position, velocity):
     h = position[1]
     x_vel = velocity[0]
     y_vel = velocity[1]
 
-    pot = m * g * h
+    pot = m * g * max(h,0)
 
     kin = m * (x_vel**2 + y_vel**2) / 2
 
     tot = pot + kin
     return pot, kin, tot
 
-# nico
-for i in smth:
-    time += ts
-    f = tot_force_vect(pos, v)
-    pos, vel = update_pos(pos, v, f)
-    if pos(0) & pos(1) =
+t_hist = [time]
+x_hist = [pos[0]]
+y_hist = [pos[1]]
+pot_hist, kin_hist, tot_hist = [], [], []
 
+# nico
+while pos[1] > 0:
+    time +=ts
+    f = tot_force_vect(vel)
+    pos, vel = update_pos(pos, vel, f, ts)
+    pot, kin, tot = calc_energies(pos, vel)
+
+    t_hist.append(time)
+    x_hist.append(pos[0])
+    y_hist.append(max(pos[1],0))
+    pot_hist.append(pot)
+    kin_hist.append(kin)
+    tot_hist.append(tot)
+
+plt.figure()
+plt.plot(x_hist, y_hist)
+plt.xlabel("x(m)")
+plt.ylabel("y(m)")
+plt.title("Trajectory of Cow")
+plt.grid()
+
+plt.show()
