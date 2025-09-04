@@ -8,13 +8,6 @@ v = 0 # initial velocity
 g = 9.8 # m/s
 
 const = 3 # wind resistnace constant
-<<<<<<< Updated upstream
-
-def tot_force_vect(curr_x, curr_y, velocity):
-    curr_x = x
-    curr_y = y
-    velocity = v
-=======
 theta = np.pi / 4 # angle of the cow falling down
 # sadman
 def tot_force_vect(position, velocity):
@@ -22,7 +15,6 @@ def tot_force_vect(position, velocity):
     #curr_y = position[1]
     curr_x_vel = velocity[0]
     curr_y_vel = velocity[1]
->>>>>>> Stashed changes
 
     #calculate force x acceleration
 
@@ -39,17 +31,6 @@ def tot_force_vect(position, velocity):
     wind = const * velocity**2
     grav = - m * g
     force = wind + grav
-<<<<<<< Updated upstream
-    return force 
-
-def update_pos(init_pos, velocity, force, ts):
-    init_x = x
-    init_y = y
-    velocity = v
-    
-    return x,y
-
-=======
     a = 1
     return force
 '''
@@ -87,7 +68,6 @@ def update_pos(position, velocity, force, time_step):
 
 """
 # nico
->>>>>>> Stashed changes
 def calc_forces():
     h = y
     pot = m * g * h
@@ -95,8 +75,6 @@ def calc_forces():
     tot = pot + kin
     return pot, kin, tot
 
-<<<<<<< Updated upstream
-=======
 # nico
 for i in smth:
     time += ts
@@ -104,4 +82,3 @@ for i in smth:
     pos, vel = update_pos(pos, v, f)
     if pos(0) & pos(1) =
 """
->>>>>>> Stashed changes
