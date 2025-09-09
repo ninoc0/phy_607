@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 # setting initial conditions
 m = 1000 # kg
 time = 0
-pos = [0,300]
-vel = [10,-5]
+pos = [0,1000]
+vel = [1,100]
 g = 9.8 # m/s^2
 
-const = 3 # wind resistnace constant
+const = 4 # wind resistnace constant
 
 # sadman
 def tot_force_vect(velocity):
@@ -98,29 +98,59 @@ def testing_timesteps(ts, pos_init, vel_init, time):
     return t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist
 
 def analytic_solution(x0, y0, vx0, vy0):
-    t = np.linspace(0, 10, 500)
+    t = np.linspace(0, 28, 500)
     x = x0 + vx0*t
     y = y0 + vy0*t - 0.5*g*t**2
     y = np.maximum(y,0)
     return t,x,y
 
-t_a,x_a,y_a = analytic_solution(0, 300, 15, -5)
+t_a,x_a,y_a = analytic_solution(pos[0], pos[1], vel[0], vel[1])
 
+## graphing 0 drag analytic vs code
 # graphing the trajectory
 plt.figure()
 
 # the trajectory gets to a higher precision and has more defined motion as it approaches 0
-t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(0.0001, pos, vel, time)
-plt.plot(x_hist, y_hist, label="ts=0.0001")
-t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(0.05, pos, vel, time)
-plt.plot(x_hist, y_hist, label="ts=0.05")
-t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(1, pos, vel, time)
-plt.plot(x_hist, y_hist, label="ts=1")
-t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(3, pos, vel, time)
-plt.plot(x_hist, y_hist, label="ts=3")
-
+t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(0.001, pos, vel, time)
+plt.plot(x_hist, y_hist, label="ts=0.001")
 # the analytic solution fits the parabolic shape better and the cow makes it further before hitting the ground
 plt.plot(x_a, y_a, "--", label="Analytic Soution")
+plt.xlabel("x(m)")
+plt.ylabel("y(m)")
+plt.title("Trajectory of Cow")
+plt.legend()
+plt.grid()
+
+# printing output file
+f = open("output_ts001.out", "w")
+f.write(f"X: {x_hist}\nY: {y_hist}\nTime: {t_hist}")
+
+## changing time steps
+plt.figure()
+t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(0.1, pos, vel, time)
+plt.plot(x_hist, y_hist, label="ts=0.1")
+f = open("output_ts1.out", "w")
+f.write(f"X: {x_hist}\nY: {y_hist}\nTime: {t_hist}")
+
+t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(0.01, pos, vel, time)
+plt.plot(x_hist, y_hist, label="ts=0.01")
+f = open("output_ts01.out", "w")
+f.write(f"X: {x_hist}\nY: {y_hist}\nTime: {t_hist}")
+
+t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(0.001, pos, vel, time)
+plt.plot(x_hist, y_hist, label="ts=0.001")
+
+t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(0.0001, pos, vel, time)
+plt.plot(x_hist, y_hist, label="ts=0.0001")
+
+t_hist1, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(0.00001, pos, vel, time)
+plt.plot(x_hist, y_hist, label="ts=0.00001")
+f = open("output_ts00001.out", "w")
+f.write(f"X: {x_hist}\nY: {y_hist}\nTime: {t_hist}")
+
+plt.plot(x_a, y_a, "--", label="Analytic Soution")
+f = open("output_analytic.out", "w")
+f.write(f"X: {x_a}\nY: {y_a}\nTime: {t_a}")
 
 plt.xlabel("x(m)")
 plt.ylabel("y(m)")
