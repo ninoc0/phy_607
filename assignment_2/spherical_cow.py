@@ -8,7 +8,7 @@ pos = [0,1000]
 vel = [1,100]
 g = 9.8 # m/s^2
 
-const = 4 # wind resistnace constant
+const = 0 # wind resistnace constant
 
 # sadman
 def tot_force_vect(velocity):
@@ -127,18 +127,20 @@ f.write(f"X: {x_hist}\nY: {y_hist}\nTime: {t_hist}")
 
 ## changing time steps
 plt.figure()
-t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(0.1, pos, vel, time)
-plt.plot(x_hist, y_hist, label="ts=0.1")
-f = open("output_ts1.out", "w")
+t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(0.05, pos, vel, time)
+plt.plot(x_hist, y_hist, label="ts=005")
+f = open("output_ts005.out", "w")
 f.write(f"X: {x_hist}\nY: {y_hist}\nTime: {t_hist}")
 
 t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(0.01, pos, vel, time)
-plt.plot(x_hist, y_hist, label="ts=0.01")
-f = open("output_ts01.out", "w")
+plt.plot(x_hist, y_hist, label="ts=001")
+f = open("output_ts001.out", "w")
 f.write(f"X: {x_hist}\nY: {y_hist}\nTime: {t_hist}")
 
-t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(0.001, pos, vel, time)
-plt.plot(x_hist, y_hist, label="ts=0.001")
+t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(0.1, pos, vel, time)
+plt.plot(x_hist, y_hist, label="ts=0.1")
+f = open("output_ts01.out", "w")
+f.write(f"X: {x_hist}\nY: {y_hist}\nTime: {t_hist}")
 
 t_hist, x_hist, y_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(0.0001, pos, vel, time)
 plt.plot(x_hist, y_hist, label="ts=0.0001")
