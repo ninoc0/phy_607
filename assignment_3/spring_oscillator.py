@@ -1,37 +1,34 @@
 #%%
+## importing libraries
 import numpy as np
 import matplotlib.pyplot as plt
 #%%
+## constants
 k = 2 # spring constant
-x = 8 # initial position
+x0 = 8 # initial position
 m = 10 # mass
-g = 9.8 # gravity
+v0 = 0 # initial velocity
 
+#%%
+## calculating for the real solution
 def tot_force_vect(position):
     curr_x = position
-
-    #creating a force vector
     force = -k * curr_x
-
     return force 
 
-def update_pos(position, force, time_step):
+def real(position, velocity, force, time):
     curr_x = position
-    x_force = force
+    curr_v = velocity
+    x_acceleration = force / m 
 
-    #calculate force x acceleration
-    x_acceleration = x_force / m 
+    new_x = curr_x*np.cos(np.sqrt(k/m)*time) + (curr_v/np.sqrt(k/m))*np.sin(np.sqrt(k/m)*time)
+    new_v = -curr_x*np.sqrt(k/m)*np.sin(np.sqrt(k/m)*time) + curr_v*np.cos(np.sqrt(k/m)*time)
 
-    new_vel_x = x_acceleration*time_step
-
-    new_x = curr_x + new_vel_x * time_step
-
-    #gives out new position and velocity
     position = new_x
-    velocity = new_vel_x
-
+    velocity = new_v
     return position , velocity
 
+## calculating eucler explicit
 def calc_energies(position, velocity):
     h = position
     x_vel = velocity
