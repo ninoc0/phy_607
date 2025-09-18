@@ -57,14 +57,14 @@ def rk2(x0, v0, ts, steps):
         k1x = v[i]
         k1v = accel(x[i])
 
-        x_mid = x[i] + 0.5*ts*k1x
-        v_mid = v[i] + 0.5*ts*k1v
+        x_mid = x[i] + ts*k1x
+        v_mid = v[i] + ts*k1v
 
         k2x = v_mid
         k2v = accel(x_mid)
 
-        curr_x = x[i] + 0.5*ts*k2x
-        curr_v = v[i] + 0.5*ts*k2v
+        curr_x = x[i] + ts*k2x
+        curr_v = v[i] + ts*k2v
 
         x.append(curr_x)
         v.append(curr_v)
@@ -72,8 +72,9 @@ def rk2(x0, v0, ts, steps):
 #%% 
 ## run simulations
 def simulate(periods):
-    ts = T/100
-    steps = int(periods * 100)
+    N = 100
+    ts = T/N
+    steps = int(periods * N)
     t = np.linspace(0, periods*T, steps+1)
 
     x, v = analytic_solution(t,x0,v0)
