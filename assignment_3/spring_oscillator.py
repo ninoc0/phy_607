@@ -8,72 +8,60 @@ k = 2 # spring constant
 x0 = 8 # initial position
 m = 10 # mass
 v0 = 0 # initial velocity
+omega = np.sqrt(k/m) # angular freq
+T = 2*np.pi/omega # period
 
 #%%
-## calculating for the real solution
-def tot_force_vect(position):
-    curr_x = position
-    force = -k * curr_x
-    return force 
+# force vect
+def force(x):
+    return -k * x
+# adding acceleration bc we use it a lot
+def accel(x):
+    return force(x) / m
 
-def real(position, velocity, force, time):
-    curr_x = position
-    curr_v = velocity
-    x_acceleration = force / m 
-
-    new_x = curr_x*np.cos(np.sqrt(k/m)*time) + (curr_v/np.sqrt(k/m))*np.sin(np.sqrt(k/m)*time)
-    new_v = -curr_x*np.sqrt(k/m)*np.sin(np.sqrt(k/m)*time) + curr_v*np.cos(np.sqrt(k/m)*time)
-
-    position = new_x
-    velocity = new_v
-    return position , velocity
+# calcauting real solution
+def analytic_solution(t, x0, v0):
+    x = x0*np.cos(omega*t) + (v0/omega)*np.sin(omega*t)
+    v = -x0*omega*np.sin(omega*t) + v0*np.cos(omega*t)
+    return x, v
 
 ## calculating eucler explicit
-def calc_energies(position, velocity):
-    h = position
-    x_vel = velocity
+def euler_explicit(x0, v0, dt, steps):
+    x = [x0]
+    v = [v0]
+    for i in range(steps):
+        a = accel(x[i])
+        curr_x = x[i] + dt*v[i]
+        curr_v = v[i] + dt*a
+        x.append(curr_x)
+        v.append(curr_v)
+    return np.array(x), np.array(v)
 
-    # U = mgh
-    pot = m * g * h
-    # T = 1/2 mv**2
-    kin = m * (x_vel**2) / 2
-
-    tot = pot + kin
-    return pot, kin, tot
-
-def testing_timesteps(ts, pos_init, time):
-    pos = pos_init
-    vel = 0
-
-    # stores data for graphing
-    t_hist = [time]
-    x_hist = [pos]
-    pot_hist, kin_hist, tot_hist = [], [], []
+#%% 
+## run simulations
+def simulate(periods):
+    ts = T/100
     
-    # running the code over and over until the height is 0 
-    while time < 40:
-        time +=ts
-        f = tot_force_vect(pos)
-        pos, vel = update_pos(pos, f, ts)
-        pot, kin, tot = calc_energies(pos, vel)
+    steps = int(periods * 100)
+    t = np.linspace(0, periods*T, steps+1)
 
-        # updating the stored data
-        t_hist.append(time)
-        x_hist.append(pos)
-        pot_hist.append(pot)
-        kin_hist.append(kin)
-        tot_hist.append(tot)
-    return t_hist, x_hist, pot_hist, kin_hist, tot_hist
+    x, v = analytic_solution(t,x0,v0)
+    x_eu, v_eu = euler_explicit(x0,v0,ts,steps)
 
-plt.figure()
+    return t, (x,v), (x_eu, v_eu)
 
-# the trajectory gets to a higher precision and has more defined motion as it approaches 0
-t_hist, x_hist, pot_hist, kin_hist, tot_hist = testing_timesteps(0.001, x, 0)
-plt.plot(t_hist, x_hist, label="ts=0.001")
+#%%
+# plotting position
+plt.figure(figsize=(10, 5))
+t, (x,v), (x_eu, v_eu) = simulate(5)
+plt.plot(t/T, x, label="Analytic")
+plt.plot(t/T, x_eu,   label="Euler explicit")
+plt.xlabel("Time [periods]")
+plt.ylabel("Position [m]")
+plt.title(f"Simple Harmonic Oscilations (5 periods)")
+plt.legend(loc="best")
+plt.grid(True, alpha=0.3)
 
-plt.xlabel("time")
-plt.ylabel("y(m)")
-plt.title("Spring")
-plt.legend()
-plt.grid()
+
+
 # %%
