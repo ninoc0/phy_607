@@ -4,6 +4,7 @@ approximates solutions to ODEs using a Taylor expansion.
 
 """
 import numpy as np
+
 def euler(f, y0, t):
     """
     Parameters

@@ -2,14 +2,17 @@
 Minimal Fabry–Perot cavity ODE demo.
 
 Examples:
-  python main.py ode --mode ringdown --tmax 0.5 --T1 3e-3 --T2 3e-3 --Lrt 1e-3
-  python main.py ode --mode stepon  --delta 2e5 --tmax 5e-4 --npts 2000
+  python main.py ode --mode ringdown --method euler --tmax 5e-4 --npts 2000
+  python main.py ode --mode stepon  --method rk4   --delta 2e5
+  python main.py ode --mode stepon  --method both  --delta 2e5 --tmax 5e-4 --npts 2000
 """
 
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 from euler_explicit import euler 
+from runge_kutta import rk4
+
 
 # Analytic Model
 
@@ -48,14 +51,22 @@ def run_ode(args):
         s_in = (lambda _t: args.s0)  # constant input
         a_ref = analytic_stepon(t, args.s0, kappa, kext, delta)
 
-    # Euler integration
     rhs = lambda ti, ai: cavity_rhs(ti, ai, kappa, kext, delta, s_in)
-    a_num = euler(rhs, a0, t)
+    
+    # calling functions
+    results = []
+    if args.method in ("euler", "both"):
+        a_euler = euler(rhs, a0, t)
+        results.append(("Euler |a|^2", a_euler))
+    if args.method in ("rk4", "both"):
+        a_rk4 = rk4(rhs, a0, t)
+        results.append(("RK4 |a|^2", a_rk4))
 
     # plot |a|^2
     plt.figure()
     plt.plot(t * 1e6, np.abs(a_ref) ** 2, label="analytic |a|^2")
-    plt.plot(t * 1e6, np.abs(a_num) ** 2, "--", label="Euler |a|^2")
+    for label, a in results:
+        plt.plot(t * 1e6, np.abs(a) ** 2, "--", label=label)
     plt.xlabel("time [µs]")
     plt.ylabel("Circulating Power [W]")
     plt.title(f"Cavity {args.mode} (Δ={delta:.2g} rad/s)")
@@ -69,6 +80,7 @@ def build_parser():
 
     q = sub.add_parser("ode", help="Fabry–Perot cavity")
     q.add_argument("--mode", choices=["ringdown", "stepon"], default="ringdown")
+    q.add_argument("--method", choices=["euler", "rk4", "both"], default="both")
     q.add_argument("--tmax", type=float, default=300e-6)
     q.add_argument("--npts", type=int, default=2000)
     q.add_argument("--delta", type=float, default=0.0, help="detuning [rad/s]")
