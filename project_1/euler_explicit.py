@@ -4,13 +4,17 @@ approximates solutions to ODEs using a Taylor expansion.
 
 """
 import numpy as np
-def euler_exp(f, y0, t):
+def euler(f, y0, t):
     """
+    Parameters
+    -----------
     f: function f(t, y) -> is the derivative
     y0: initial state at t=0
     t: array of times
-
-    returns: array of cavity power states at each time
+    
+    Return
+    -------
+    y: array of cavity power states at each time
     """
     # import initial conditions
     y = np.zeros((len(t),), dtype=complex)
@@ -21,3 +25,4 @@ def euler_exp(f, y0, t):
         dt = t[i+1] - t[i]
         # find x_(n+1) = x(n) + ts * dx(n)/dt
         y[i+1] = y[i] + dt * f(t[i], y[i])
+    return y
