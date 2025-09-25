@@ -12,6 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from euler_explicit import euler 
 from runge_kutta import rk4
+from euler_sympletic import euler_sympletic
 
 
 # Analytic Model
@@ -40,7 +41,8 @@ def run_ode(args):
 
     # time array
     t = np.linspace(0.0, args.tmax, args.npts)
-
+    ts = t[1] - t[0]
+    steps = len(t) - 1
     # options for interaction
     if args.mode == "ringdown":
         a0 = args.a0 + 0j
@@ -55,13 +57,15 @@ def run_ode(args):
     
     # calling functions
     results = []
-    if args.method in ("euler", "both"):
+    if args.method in ("euler", "all"):
         a_euler = euler(rhs, a0, t)
         results.append(("Euler |a|^2", a_euler))
-    if args.method in ("rk4", "both"):
+    if args.method in ("rk4", "all"):
         a_rk4 = rk4(rhs, a0, t)
         results.append(("RK4 |a|^2", a_rk4))
-
+    if args.method in ("sympletic", "all"):
+        a_be = euler_sympletic(rhs, a0, t)
+        results.append(("Sympletic (Backward Euler) |a|^2", a_be))
     # plot |a|^2
     plt.figure()
     plt.plot(t * 1e6, np.abs(a_ref) ** 2, label="analytic |a|^2")
@@ -80,7 +84,7 @@ def build_parser():
 
     q = sub.add_parser("ode", help="Fabry–Perot cavity")
     q.add_argument("--mode", choices=["ringdown", "stepon"], default="ringdown")
-    q.add_argument("--method", choices=["euler", "rk4", "both"], default="both")
+    q.add_argument("--method", choices=["euler", "rk4", "sympletic", "all"], default="all")
     q.add_argument("--tmax", type=float, default=300e-6)
     q.add_argument("--npts", type=int, default=2000)
     q.add_argument("--delta", type=float, default=0.0, help="detuning [rad/s]")
