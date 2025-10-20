@@ -38,3 +38,33 @@ def state_derivative(state, q1, q2, m):
     force = coulomb_force(pos, q1, q2)
     acc = force / m
     return np.array([vx, vy, acc[0], acc[1]])
+
+def rk4_step(state, dt, q1, q2, m):
+    """Single Runge–Kutta 4 step."""
+    k1 = state_derivative(state, q1, q2, m)
+    k2 = state_derivative(state + 0.5*dt*k1, q1, q2, m)
+    k3 = state_derivative(state + 0.5*dt*k2, q1, q2, m)
+    k4 = state_derivative(state + dt*k3, q1, q2, m)
+    return state + (dt/6)*(k1 + 2*k2 + 2*k3 + k4)
+
+def evolve_trajectory(state0, q1, q2, m, dt=1e-21, steps=5000):
+    """
+    Evolve the trajectory using coulomb interaction.
+
+    Returns:
+        trajectory : array of shape (N, 4): [x, y, vx, vy] at each step
+    """
+    trajectory = np.zeros((steps, 4)) 
+    trajectory[0] = state0
+    for i in range(1, steps): # main loop
+        trajectory[i] = rk4_step(trajectory[i-1], dt, q1, q2, m) # calls rk4 state change
+        r = np.linalg.norm(trajectory[i, :2]) # computes distance cahnged
+        if r > 10 * np.linalg.norm(state0[:2]): # to save on time, assuming if r is 10 times greater, the deflection can be ignored
+            trajectory = trajectory[:i+1] # shortens the array to only include necessary steps
+            break
+    return trajectory
+
+
+
+
+
