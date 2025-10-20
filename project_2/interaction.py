@@ -58,11 +58,9 @@ def evolve_trajectory(state0, q1, q2, m, dt=1e-21, steps=5000):
     trajectory[0] = state0
     for i in range(1, steps): # main loop
         trajectory[i] = rk4_step(trajectory[i-1], dt, q1, q2, m) # calls rk4 state change
-        r = np.linalg.norm(trajectory[i, :2]) # computes distance cahnged
-        if r > 10 * np.linalg.norm(state0[:2]): # to save on time, assuming if r is 10 times greater, the deflection can be ignored
-            trajectory = trajectory[:i+1] # shortens the array to only include necessary steps
-            break
     return trajectory
+
+
 
 
 
