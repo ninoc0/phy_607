@@ -82,7 +82,7 @@ def plot_scattering_energy():
     plt.text(4.2,72.5,rf"$R^2$ = {np.round(regression_sol.rvalue**2,8)}",fontsize=14)
     plt.ylabel(r"$\cot(\theta/2)$",fontsize=14)
     plt.show()
-    plt.savefig("EvsAngle.png",dpi=300)
+    # plt.savefig("EvsAngle.png",dpi=300)
     plt.clf()
 
 def plot_atomic_numbers():
@@ -128,5 +128,5 @@ def plot_atomic_numbers():
     plt.legend(loc='lower right')
     plt.ylabel(r"$\cot(\theta/2)$",fontsize=14)
     plt.show()
-    plt.savefig("ZvsAngle.png",dpi=300)
+    # plt.savefig("ZvsAngle.png",dpi=300)
 
