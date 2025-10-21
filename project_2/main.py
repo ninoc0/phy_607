@@ -44,7 +44,6 @@ def plot_powerlaw_trajectories(N):
 
     norm = mcolors.Normalize(vmin=np.min(impact_params), vmax=np.max(impact_params))
     cmap = cm.turbo
-    sm = cm.ScalarMappable(norm=norm, cmap=cmap)
 
     for b in impact_params:
         color = cmap(norm(b))
