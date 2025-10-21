@@ -47,6 +47,7 @@ def plot_scattering_angles(N = 100):
 
 
     plt.hist(angles, bins = 20)
+    plt.title(f"Frequency of Scattering Angles for {N} Simulations")
     plt.xlabel("Scattering Angle (Radians)")
     plt.ylabel("Counts")
     plt.show()
