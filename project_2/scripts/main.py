@@ -15,7 +15,16 @@ def main():
     )
     parser.add_argument(
         "--plot",
-        choices=["basic", "powerlaw", "angle_vs_b", "hist", "energy_vs_angle", "atomic_number"],
+        choices=[
+            "basic",
+            "powerlaw",
+            "angle_vs_b",
+            "hist",
+            "energy_vs_angle",
+            "atomic_number",
+            "benchmark",
+            "time_bar"
+        ],
         required=True,
         help=(
             "Choose which plot to generate: "
@@ -25,14 +34,13 @@ def main():
             "'hist' for histogram of angles, "
             "'energy_vs_angle' for energy vs scattering, "
             "'atomic_number' for scattering at various atomic numbers, "
+            "'benchmark' for execution time vs. number of particles"
+            "'time_bar' for execution time of individual routines, displayed as a bar chart"
         ),
     )
 
     parser.add_argument(
-        "--N",
-        type=int,
-        default=100,
-        help="Number of samples to use (default: 100)."
+        "--N", type=int, default=100, help="Number of samples to use (default: 100)."
     )
 
     args = parser.parse_args()
@@ -49,6 +57,10 @@ def main():
         plot_scattering_energy()
     elif args.plot == "atomic_number":
         plot_atomic_numbers()
+    elif args.plot == "benchmark":
+        plot_benchmark()
+    elif args.plot =="time_bar":
+        plot_time_bar()
 
 
 if __name__ == "__main__":
