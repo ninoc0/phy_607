@@ -115,6 +115,7 @@ def plot_scattering_angles(N = 100):
 
     plt.hist(angles, bins = 20)
     plt.xlabel("Scattering Angle [Radians]",fontsize=14)
+    plt.title(f"Frequency of Scattering Angles for {N} Simulations")
     plt.ylabel("Counts")
     plt.show()
 
@@ -195,4 +196,3 @@ def plot_atomic_numbers():
     plt.ylabel(r"$\cot(\theta/2)$",fontsize=14)
     plt.grid(alpha = 0.5)
     plt.savefig("ZvsAngle.png",dpi=300)
-
