@@ -7,7 +7,7 @@ dependencies = [
 	"scipy"
 ]
 authors = [
-	{ name = "Chance Jackson", email = "cjacks34@syr.edu"}.
+	{ name = "Chance Jackson", email = "cjacks34@syr.edu"},
 	{ name = "Nico O'Neill", email = "neoneill@syr.edu"}
 ]
 
