@@ -4,7 +4,8 @@ version = "0.0.1"
 dependencies = [
 	"numpy",
 	"matplotlib",
-	"scipy"
+	"scipy",
+	"time"
 ]
 authors = [
 	{ name = "Chance Jackson", email = "cjacks34@syr.edu"},
