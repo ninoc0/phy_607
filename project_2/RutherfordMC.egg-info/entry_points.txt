@@ -1,0 +1,2 @@
+[console_scripts]
+main = scripts:main

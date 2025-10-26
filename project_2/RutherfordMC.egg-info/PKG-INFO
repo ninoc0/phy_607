@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: RutherfordMC
+Version: 0.0.1
+Summary: A package containing methods to simulate a Rutherford scattering event, including random sampling of scattering particle energy and impact parameter
+Author-email: Chance Jackson <cjacks34@syr.edu>, Nico O'Neill <neoneill@syr.edu>
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+Requires-Dist: numpy
+Requires-Dist: matplotlib
+Requires-Dist: scipy
