@@ -80,6 +80,17 @@ def likelihood_log(A, B, C, D, xpos, ypos):
 
     return log_L
 
+def log_prior(A, B, C, D): 
+    if -500 < A < 500 and -500 < B < 500 and -500 < C < 500 and -500 < D < 500: 
+        return 0.0
+    return -np.inf 
+def prob_log(A, B, C, D, x, y): 
+    #This is the posterior function which the product of Prior and Likelihood function
+
+    lp = log_prior(A=A, B=B, C=C, D=D)
+    if not np.isfinite(lp): 
+        return -np.inf  
+    return lp + likelihood_log(A=A, B=B, C=C, D=D, xpos = x, ypos =y)
 
 
 # Run gradient descent on normalized data
