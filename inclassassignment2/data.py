@@ -2,6 +2,7 @@ import h5py
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
+import emcee
 
 # Load data
 f = h5py.File('./data.hdf', 'r')
@@ -161,3 +162,41 @@ print(f"\nAdjusted R-squared: {adjusted_r_squared:.6f}")
 #gives likelihood function 
 
 print(f"The likelihood function: {likelihood_log(A = A, B = B, C = C, D = D, xpos= xpos, ypos = ypos)}")
+
+#mcmc 
+
+n_walker = 500
+n_dim = 4 
+n_iter = 1000 
+
+init_params = np.array([A, B, C , D])
+pos = init_params + 1e-2 * np.random.rand(n_walker, n_dim)
+
+sampler = emcee.EnsembleSampler(n_walker , n_dim. prob_log, args = (xpos, ypos))
+
+sampler.run_mcmc(pos, n_iter, progress = True)
+
+# Get the chain: shape = (n_walkers, n_iterations, n_dim)
+samples = sampler.get_chain()
+
+# Plot at iterations: 0, 100, 200, ..., 1000
+iterations_to_plot = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+param_names = ['A', 'B', 'C', 'D']
+
+for iteration in iterations_to_plot:
+    idx = iteration - 1 if iteration > 0 else 0
+    
+    for i, ax in enumerate(axes.flat):
+        # Get walker positions at this iteration
+        walker_positions = samples[:, idx, i]
+        
+        ax.hist(walker_positions, bins=30, alpha=0.5, 
+                label=f'Iter {iteration}')
+        ax.set_xlabel(param_names[i])
+        ax.set_ylabel('Count')
+        ax.legend()
+
+plt.tight_layout()
+plt.show()
